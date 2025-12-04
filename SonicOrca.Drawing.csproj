@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--Project was exported from assembly: C:\Games\S2HD_2.0.1012-rc2\SonicOrca.Drawing.dll-->
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E660D339-9E15-4B97-81E4-4D50595630B5}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AssemblyName>SonicOrca.Drawing</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <ApplicationVersion>2.0.1012.10520</ApplicationVersion>
+    <FileAlignment>512</FileAlignment>
+    <RootNamespace>SonicOrca</RootNamespace>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="OpenTK">
+      <HintPath>lib\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="SonicOrca">
+      <HintPath>lib\SonicOrca.dll</HintPath>
+    </Reference>
+    <Reference Include="SonicOrca.Resources">
+      <HintPath>lib\SonicOrca.Resources.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Extensions\GraphicsExtensions.cs" />
+    <Compile Include="Drawing\DefaultRendererFactory.cs" />
+    <Compile Include="Drawing\GreenList`1.cs" />
+    <Compile Include="Drawing\TheRenderer.cs" />
+    <Compile Include="Drawing\Renderers\MaskRenderer.cs" />
+    <Compile Include="Drawing\Renderers\FontRenderer.cs" />
+    <Compile Include="Drawing\Renderers\CharacterRenderer.cs" />
+    <Compile Include="Drawing\Renderers\ClassicFadeTransitionRenderer.cs" />
+    <Compile Include="Drawing\Renderers\FilterRenderer.cs" />
+    <Compile Include="Drawing\Renderers\GaussianBlurRenderer.cs" />
+    <Compile Include="Drawing\Renderers\HeatRenderer.cs" />
+    <Compile Include="Drawing\Renderers\NonLayerRenderer.cs" />
+    <Compile Include="Drawing\Renderers\ObjectRenderer.cs" />
+    <Compile Include="Drawing\Renderers\RenderingHelpers.cs" />
+    <Compile Include="Drawing\Renderers\ScreenshotRenderer.cs" />
+    <Compile Include="Drawing\Renderers\ShadowRenderer.cs" />
+    <Compile Include="Drawing\Renderers\SimpleRenderer.cs" />
+    <Compile Include="Drawing\Renderers\TileRenderer.cs" />
+    <Compile Include="Drawing\Renderers\WaterfallRenderer.cs" />
+    <Compile Include="Drawing\Renderers\WaterRenderer.cs" />
+    <Compile Include="Drawing\LevelRendering\RenderingLayer.cs" />
+    <Compile Include="Drawing\LevelRendering\IRenderingOptions.cs" />
+    <Compile Include="Drawing\LevelRendering\RenderingOptions.cs" />
+    <Compile Include="Drawing\LevelRendering\RenderingTileList.cs" />
+    <Compile Include="Drawing\LevelRendering\LevelRenderer.cs" />
+    <Compile Include="Drawing\LevelRendering\RenderingTiler.cs" />
+    <Compile Include="Drawing\LevelRendering\TileRenderInfo.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
