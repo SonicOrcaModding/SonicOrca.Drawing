@@ -1,0 +1,6 @@
+[submodule "SonicOrca"]
+	path = SonicOrca
+	url = https://github.com/SonicOrcaModding/SonicOrca
+[submodule "SonicOrca.Resources"]
+	path = SonicOrca.Resources
+	url = https://github.com/SonicOrcaModding/SonicOrca.Resources

@@ -36,12 +36,6 @@
     <Reference Include="OpenTK">
       <HintPath>lib\OpenTK.dll</HintPath>
     </Reference>
-    <Reference Include="SonicOrca">
-      <HintPath>lib\SonicOrca.dll</HintPath>
-    </Reference>
-    <Reference Include="SonicOrca.Resources">
-      <HintPath>lib\SonicOrca.Resources.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -76,6 +70,16 @@
     <Compile Include="Drawing\LevelRendering\RenderingTiler.cs" />
     <Compile Include="Drawing\LevelRendering\TileRenderInfo.cs" />
     <Compile Include="AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="SonicOrca.Resources\SonicOrca.Resources.csproj">
+      <Project>{4280aadb-980e-41e1-bd06-f56350e9e93b}</Project>
+      <Name>SonicOrca.Resources</Name>
+    </ProjectReference>
+    <ProjectReference Include="SonicOrca\SonicOrca.csproj">
+      <Project>{316eea62-0f1e-4531-9d67-f13f5ae4af32}</Project>
+      <Name>SonicOrca</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
