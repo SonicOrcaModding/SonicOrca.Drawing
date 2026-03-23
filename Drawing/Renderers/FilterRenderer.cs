@@ -4,6 +4,7 @@
 // MVID: 31C48419-27DE-46EA-9D16-61FB91FF0FE1
 // Assembly location: C:\Games\S2HD_2.0.1012-rc2\SonicOrca.Drawing.dll
 
+using SonicOrca;
 using SonicOrca.Extensions;
 using SonicOrca.Geometry;
 using SonicOrca.Graphics;
@@ -40,7 +41,7 @@ namespace SonicOrca.Drawing.Renderers
         this._graphicsContext = renderer.Window.GraphicsContext;
         string vertexOuput;
         string fragmentOutput;
-        OrcaShader.Parse(File.ReadAllText("shaders/greyscale_filter.shader"), out vertexOuput, out fragmentOutput);
+        OrcaShader.Parse(File.ReadAllText(GamePaths.ResolveContentFile("shaders/greyscale_filter.shader")), out vertexOuput, out fragmentOutput);
         this._vertexShader = this._graphicsContext.CreateShader(ShaderType.Vertex, vertexOuput);
         this._fragmentShader = this._graphicsContext.CreateShader(ShaderType.Fragment, fragmentOutput);
         this._shaderProgram = this._graphicsContext.CreateShaderProgram(this._vertexShader, this._fragmentShader);
