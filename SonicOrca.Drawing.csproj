@@ -1,13 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>SonicOrca</RootNamespace>
     <AssemblyName>SonicOrca.Drawing</AssemblyName>
-    <LangVersion>7.3</LangVersion>
+    <LangVersion>12</LangVersion>
     <Nullable>disable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <UseWindowsForms>true</UseWindowsForms>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <ProjectGuid>{E660D339-9E15-4B97-81E4-4D50595630B5}</ProjectGuid>
   </PropertyGroup>
@@ -19,14 +18,10 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="OpenTK" Version="3.3.3" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.10" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SonicOrca.Resources\SonicOrca.Resources.csproj" />
     <ProjectReference Include="..\SonicOrca\SonicOrca.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="OpenTK.dll.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 </Project>

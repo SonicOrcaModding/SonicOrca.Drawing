@@ -21,7 +21,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace SonicOrca.Drawing.LevelRendering
 {
@@ -355,9 +354,6 @@ namespace SonicOrca.Drawing.LevelRendering
               {
                 bitmap.Save((System.IO.Stream) data1, ImageFormat.Png);
                 File.WriteAllBytes(Path.Combine(this._gameContext.UserDataDirectory, "copiedtiles.png"), data1.ToArray());
-                DataObject data2 = new DataObject();
-                data2.SetData("PNG", false, (object) data1);
-                Clipboard.SetDataObject((object) data2, true);
               }
             }
           }
