@@ -87,7 +87,7 @@ namespace SonicOrca.Drawing.Renderers
             distortiontexcoords = this.distortionUVs[index].ToVec2()
           };
         this._vbo.SetData<HeatRenderer.Vertex>(this._vertices, 0, 4);
-        Matrix4 orthographic = this._renderer.Window.GraphicsContext.CurrentFramebuffer.CreateOrthographic();
+        Matrix4 orthographic = this._renderer.Window.GraphicsContext.CurrentFramebuffer.CreateOrthographicCached();
         this._renderer.ActivateRenderer((IRenderer) this);
         this._graphicsContext.BlendMode = BlendMode.Alpha;
         this._graphicsContext.SetTextures((IEnumerable<ITexture>) new ITexture[2]

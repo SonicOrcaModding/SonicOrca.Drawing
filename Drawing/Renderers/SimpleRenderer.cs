@@ -41,6 +41,7 @@ namespace SonicOrca.Drawing.Renderers
       private int _batchedVertexCount;
       private Vector2[] vertexPositions = new Vector2[4];
       private Vector2[] vertexUVs = new Vector2[4];
+      private bool _flushProjectionMatrixUploaded;
 
       public Matrix4 ModelMatrix
       {
@@ -212,7 +213,8 @@ namespace SonicOrca.Drawing.Renderers
           return;
         this.PushBatchOperation();
         this._vbo.SetData<SimpleRenderer.Vertex>(this._verticesData, 0, this.numVerticesData);
-        this._projectionMatrix = this._renderer.Window.GraphicsContext.CurrentFramebuffer.CreateOrthographic();
+        this._projectionMatrix = this._renderer.Window.GraphicsContext.CurrentFramebuffer.CreateOrthographicCached();
+        this._flushProjectionMatrixUploaded = false;
         for (int index = 0; index < this.numBatchOperations; ++index)
           this._batchOperations[index].Render();
         this.numBatchOperations = 0;
@@ -546,7 +548,11 @@ namespace SonicOrca.Drawing.Renderers
           graphicsContext.SetTextures((IEnumerable<ITexture>) this._textures);
           program.Activate();
           program.SetUniform("ModelViewMatrix", this._modelMatrix);
-          program.SetUniform("ProjectionMatrix", this._simpleRenderer._projectionMatrix);
+          if (!this._simpleRenderer._flushProjectionMatrixUploaded)
+          {
+            program.SetUniform("ProjectionMatrix", this._simpleRenderer._projectionMatrix);
+            this._simpleRenderer._flushProjectionMatrixUploaded = true;
+          }
           program.SetUniform("InputTextureCount", ((IReadOnlyCollection<ITexture>) this._textures).Count);
           for (int index = 0; index < ((IReadOnlyCollection<ITexture>) this._textures).Count; ++index)
             program.SetUniform($"InputTexture[{(object) index}]", index);

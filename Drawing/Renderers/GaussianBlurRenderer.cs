@@ -111,7 +111,7 @@ namespace SonicOrca.Drawing.Renderers
           vertices[index2] = vertex2;
         }
         this._vbo.SetData<GaussianBlurRenderer.Vertex>(this._vertices, 0, 4);
-        Matrix4 orthographic = this._renderer.Window.GraphicsContext.CurrentFramebuffer.CreateOrthographic();
+        Matrix4 orthographic = this._renderer.Window.GraphicsContext.CurrentFramebuffer.CreateOrthographicCached();
         this._renderer.ActivateRenderer((IRenderer) this);
         this._graphicsContext.BlendMode = BlendMode.Alpha;
         this._graphicsContext.SetTexture(texture);

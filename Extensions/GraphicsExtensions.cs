@@ -15,6 +15,23 @@ namespace SonicOrca.Extensions
 
     public static class GraphicsExtensions
     {
+      private static int _orthographicCacheW = -1;
+      private static int _orthographicCacheH = -1;
+      private static Matrix4 _orthographicCacheMatrix;
+
+      public static Matrix4 CreateOrthographicCached(this IFramebuffer renderTarget)
+      {
+        int w = renderTarget.Width;
+        int h = renderTarget.Height;
+        if (w != GraphicsExtensions._orthographicCacheW || h != GraphicsExtensions._orthographicCacheH)
+        {
+          GraphicsExtensions._orthographicCacheW = w;
+          GraphicsExtensions._orthographicCacheH = h;
+          GraphicsExtensions._orthographicCacheMatrix = renderTarget.CreateOrthographic();
+        }
+        return GraphicsExtensions._orthographicCacheMatrix;
+      }
+
       public static Matrix4 CreateOrthographic(this IFramebuffer renderTarget)
       {
         return Matrix4.CreateOrthographicOffCenter(0.0, (double) renderTarget.Width, (double) renderTarget.Height, 0.0, 0.0, 1.0);

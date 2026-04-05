@@ -29,6 +29,7 @@ namespace SonicOrca.Drawing.Renderers
       private readonly WaterRenderer.Vertex[] _vertices = new WaterRenderer.Vertex[4];
       private ManagedShaderProgram _shaderProgram;
       private IFramebuffer _canvas;
+      private readonly Matrix4 _canvasOrthographicProjection;
 
       public double HueTarget { get; set; }
 
@@ -63,6 +64,7 @@ namespace SonicOrca.Drawing.Renderers
         this._vao = this._graphicsContext.CreateVertexArray();
         this._vao.DefineAttributes(this._shaderProgram.Program, this._vbo, typeof (WaterRenderer.Vertex));
         this._canvas = this._graphicsContext.CreateFrameBuffer(1920, 1080);
+        this._canvasOrthographicProjection = this._canvas.CreateOrthographic();
       }
 
       public void Dispose()
@@ -118,23 +120,15 @@ namespace SonicOrca.Drawing.Renderers
           this._vertices[index].texcoords = this.vertexUVs[index].ToVec2();
         }
         this._vbo.SetData<WaterRenderer.Vertex>(this._vertices, 0, 4);
-        Matrix4 orthographic = this._renderer.Window.GraphicsContext.CurrentFramebuffer.CreateOrthographic();
         this._renderer.ActivateRenderer((IRenderer) this);
         this._graphicsContext.BlendMode = BlendMode.Alpha;
         this._graphicsContext.SetTexture(0, texture);
         this._graphicsContext.SetTexture(1, WaterManager.waveTexture);
         IShaderProgram program = this._shaderProgram.Program;
         program.Activate();
-        program.SetUniform("ProjectionMatrix", orthographic);
+        program.SetUniform("ProjectionMatrix", this._canvasOrthographicProjection);
         program.SetUniform("InputTexture", 0);
         program.SetUniform("WaveTexture", 1);
-        program.SetUniform("InputHueTarget", this.HueTarget);
-        program.SetUniform("InputHueAmount", this.HueAmount);
-        program.SetUniform("InputSaturationChange", this.SaturationChange);
-        program.SetUniform("InputLuminosityChange", this.LuminosityChange);
-        program.SetUniform("InputWavePhase", this.WavePhase);
-        program.SetUniform("InputNumWaves", this.NumWaves);
-        program.SetUniform("InputWaveSize", this.WaveSize);
         program.SetUniform("iGlobalTime", this.Time);
         program.SetUniform("InputPositionX", WaterManager.offsetX);
         program.SetUniform("InputPositionY", -WaterManager.offsetY);

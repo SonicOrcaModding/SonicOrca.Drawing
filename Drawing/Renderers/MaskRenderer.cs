@@ -175,7 +175,7 @@ namespace SonicOrca.Drawing.Renderers
         program.SetUniform("IntersectionModelViewMatrix", this._intersectionModelMatrix);
         program.SetUniform("MaskModelViewMatrix", this._maskModelMatrix);
         program.SetUniform("TargetModelViewMatrix", this._targetModelMatrix);
-        program.SetUniform("ProjectionMatrix", this._graphicsContext.CurrentFramebuffer.CreateOrthographic());
+        program.SetUniform("ProjectionMatrix", this._graphicsContext.CurrentFramebuffer.CreateOrthographicCached());
         program.SetUniform("MaskInput", num);
         program.SetUniform("InputColour", this.Colour);
         program.SetUniform("MaskColorMultiply", maskColorMultiply ? 1 : 0);

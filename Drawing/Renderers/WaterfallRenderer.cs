@@ -127,7 +127,7 @@ namespace SonicOrca.Drawing.Renderers
           vertices[index2] = vertex2;
         }
         this._vbo.SetData<WaterfallRenderer.Vertex>(this._vertices, 0, 4);
-        Matrix4 orthographic = this._renderer.Window.GraphicsContext.CurrentFramebuffer.CreateOrthographic();
+        Matrix4 orthographic = this._renderer.Window.GraphicsContext.CurrentFramebuffer.CreateOrthographicCached();
         this._renderer.ActivateRenderer((IRenderer) this);
         this._graphicsContext.BlendMode = BlendMode.Opaque;
         this._graphicsContext.SetTextures((IEnumerable<ITexture>) new ITexture[2]

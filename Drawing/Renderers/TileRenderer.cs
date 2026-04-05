@@ -30,6 +30,15 @@ namespace SonicOrca.Drawing.Renderers
       private ManagedShaderProgram _shaderProgram;
       public static Colour ShadowColour;
       private TileBlendMode _tempLastBlendMode;
+      private Matrix4 _cachedModelMatrix;
+      private Matrix4 _cachedProjectionMatrix;
+      private Colour _cachedInputColour;
+      private Vector4 _cachedClipRectangle;
+      private Colour _cachedShadowColour;
+      private int _cachedFilter;
+      private float _cachedFilterAmount;
+      private float _cachedAlphaGrayscale = -1f;
+      private bool _tileUniformStateValid;
 
       public Matrix4 ModelMatrix { get; set; }
 
@@ -137,30 +146,40 @@ namespace SonicOrca.Drawing.Renderers
         foreach (ITexture texture in this.Textures)
           texture.Filtering = TextureFiltering.NearestNeighbour;
         this._graphicsContext.SetTextures((IEnumerable<ITexture>) this.Textures);
-        Matrix4 orthographic = this._renderer.Window.GraphicsContext.CurrentFramebuffer.CreateOrthographic();
+        Matrix4 orthographic = this._renderer.Window.GraphicsContext.CurrentFramebuffer.CreateOrthographicCached();
         IShaderProgram program = this._shaderProgram.Program;
         program.Activate();
-        if (ShadowRenderer.IsShadowing)
-          program.SetUniform("AlphaGrayscale", 1f);
-        else
-          program.SetUniform("AlphaGrayscale", 0.0f);
-        program.SetUniform("ModelViewMatrix", this.ModelMatrix);
-        program.SetUniform("ProjectionMatrix", orthographic);
-        program.SetUniform("InputColour", this.Colour);
-        IShaderProgram shaderProgram = program;
+        float alphaGrayscale = ShadowRenderer.IsShadowing ? 1f : 0f;
         Rectangle clipRectangle = this.ClipRectangle;
-        double x = clipRectangle.X;
-        clipRectangle = this.ClipRectangle;
-        double y = clipRectangle.Y;
-        clipRectangle = this.ClipRectangle;
-        double right = clipRectangle.Right;
-        clipRectangle = this.ClipRectangle;
-        double bottom = clipRectangle.Bottom;
-        Vector4 vector4 = new Vector4(x, y, right, bottom);
-        shaderProgram.SetUniform("InputClipRectangle", vector4);
-        program.SetUniform("ShadowColour", TileRenderer.ShadowColour);
-        program.SetUniform("InputFilter", this.Filter);
-        program.SetUniform("InputFilterAmount", this.FilterAmount);
+        Vector4 clipVec = new Vector4(clipRectangle.X, clipRectangle.Y, clipRectangle.Right, clipRectangle.Bottom);
+        if (!this._tileUniformStateValid
+            || this.ModelMatrix != this._cachedModelMatrix
+            || orthographic != this._cachedProjectionMatrix
+            || this.Colour != this._cachedInputColour
+            || clipVec != this._cachedClipRectangle
+            || TileRenderer.ShadowColour != this._cachedShadowColour
+            || this.Filter != this._cachedFilter
+            || Math.Abs(this.FilterAmount - (double) this._cachedFilterAmount) > 1E-9
+            || Math.Abs(alphaGrayscale - this._cachedAlphaGrayscale) > 1E-9)
+        {
+          program.SetUniform("AlphaGrayscale", alphaGrayscale);
+          program.SetUniform("ModelViewMatrix", this.ModelMatrix);
+          program.SetUniform("ProjectionMatrix", orthographic);
+          program.SetUniform("InputColour", this.Colour);
+          program.SetUniform("InputClipRectangle", clipVec);
+          program.SetUniform("ShadowColour", TileRenderer.ShadowColour);
+          program.SetUniform("InputFilter", this.Filter);
+          program.SetUniform("InputFilterAmount", this.FilterAmount);
+          this._cachedModelMatrix = this.ModelMatrix;
+          this._cachedProjectionMatrix = orthographic;
+          this._cachedInputColour = this.Colour;
+          this._cachedClipRectangle = clipVec;
+          this._cachedShadowColour = TileRenderer.ShadowColour;
+          this._cachedFilter = this.Filter;
+          this._cachedFilterAmount = (float) this.FilterAmount;
+          this._cachedAlphaGrayscale = alphaGrayscale;
+          this._tileUniformStateValid = true;
+        }
         this._vao.Render(PrimitiveType.Quads, 0, this.numVertices);
         this.Rendering = false;
       }

@@ -25,6 +25,7 @@ namespace SonicOrca.Drawing.Renderers
       private readonly IVertexArray _vao;
       private readonly IVertexArray _vaoShadow;
       private readonly List<ObjectRenderer.Vertex> _vertices = new List<ObjectRenderer.Vertex>();
+      private ObjectRenderer.Vertex[] _vertexUploadBuffer = Array.Empty<ObjectRenderer.Vertex>();
       private readonly ManagedShaderProgram _shaderProgram;
       private readonly ManagedShaderProgram _shadowShaderProgram;
       private Matrix4 _projectionMatrix;
@@ -34,6 +35,9 @@ namespace SonicOrca.Drawing.Renderers
       private Vector2 _scale;
       private Vector2[] vertexPositions = new Vector2[4];
       private Vector2[] vertexUVs = new Vector2[4];
+      private IShaderProgram _batchLastShaderProgram;
+      private float _batchLastAlphaMain = -1f;
+      private float _batchLastAlphaShadow = -1f;
 
       public Matrix4 ModelMatrix { get; set; }
 
@@ -107,8 +111,13 @@ namespace SonicOrca.Drawing.Renderers
         if (this._batchedVertexCount == 0)
           return;
         this.PushBatchOperation();
-        this._vbo.SetData<ObjectRenderer.Vertex>(this._vertices.ToArray(), 0, this._vertices.Count);
-        this._projectionMatrix = this._renderer.Window.GraphicsContext.CurrentFramebuffer.CreateOrthographic();
+        int count = this._vertices.Count;
+        if (this._vertexUploadBuffer.Length < count)
+          this._vertexUploadBuffer = new ObjectRenderer.Vertex[Math.Max(count, 512)];
+        this._vertices.CopyTo(0, this._vertexUploadBuffer, 0, count);
+        this._vbo.SetData<ObjectRenderer.Vertex>(this._vertexUploadBuffer, 0, count);
+        this._projectionMatrix = this._renderer.Window.GraphicsContext.CurrentFramebuffer.CreateOrthographicCached();
+        this._batchLastShaderProgram = null;
         foreach (ObjectRenderer.BatchOperation batchOperation in this._batchOperations)
           batchOperation.Render();
         this._batchOperations.Clear();
@@ -297,13 +306,33 @@ namespace SonicOrca.Drawing.Renderers
           graphicsContext.BlendMode = this._blendMode;
           graphicsContext.SetTexture(this._texture);
           shaderProgram1.Activate();
-          if (ShadowRenderer.IsShadowing)
-            shaderProgram1.SetUniform("AlphaGrayscale", 1f);
-          else
-            shaderProgram1.SetUniform("AlphaGrayscale", 0.0f);
+          bool programChanged = shaderProgram1 != this._objectRenderer._batchLastShaderProgram;
+          float alphaGrayscale = ShadowRenderer.IsShadowing ? 1f : 0f;
+          if (programChanged)
+          {
+            this._objectRenderer._batchLastShaderProgram = shaderProgram1;
+            shaderProgram1.SetUniform("ProjectionMatrix", this._objectRenderer._projectionMatrix);
+            shaderProgram1.SetUniform("InputTexture", 0);
+            shaderProgram1.SetUniform("AlphaGrayscale", alphaGrayscale);
+            if (this._shadow)
+              this._objectRenderer._batchLastAlphaShadow = alphaGrayscale;
+            else
+              this._objectRenderer._batchLastAlphaMain = alphaGrayscale;
+          }
+          else if (this._shadow)
+          {
+            if (alphaGrayscale != this._objectRenderer._batchLastAlphaShadow)
+            {
+              shaderProgram1.SetUniform("AlphaGrayscale", alphaGrayscale);
+              this._objectRenderer._batchLastAlphaShadow = alphaGrayscale;
+            }
+          }
+          else if (alphaGrayscale != this._objectRenderer._batchLastAlphaMain)
+          {
+            shaderProgram1.SetUniform("AlphaGrayscale", alphaGrayscale);
+            this._objectRenderer._batchLastAlphaMain = alphaGrayscale;
+          }
           shaderProgram1.SetUniform("ModelViewMatrix", this._modelMatrix);
-          shaderProgram1.SetUniform("ProjectionMatrix", this._objectRenderer._projectionMatrix);
-          shaderProgram1.SetUniform("InputTexture", 0);
           IShaderProgram shaderProgram2 = shaderProgram1;
           double x = this._clipRectangle.X;
           double y = this._clipRectangle.Y;

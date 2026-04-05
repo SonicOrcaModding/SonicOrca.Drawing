@@ -81,7 +81,7 @@ namespace SonicOrca.Drawing.Renderers
           this._vertexBuffer.AddValue(0, this.vertexUVs[index]);
         }
         this._vertexBuffer.End();
-        Matrix4 orthographic = this._renderer.Window.GraphicsContext.CurrentFramebuffer.CreateOrthographic();
+        Matrix4 orthographic = this._renderer.Window.GraphicsContext.CurrentFramebuffer.CreateOrthographicCached();
         this._renderer.ActivateRenderer((IRenderer) this);
         this._graphicsContext.BlendMode = BlendMode.Alpha;
         this._graphicsContext.SetTexture(texture);

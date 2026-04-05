@@ -83,7 +83,7 @@ namespace SonicOrca.Drawing.Renderers
         graphicsContext.BlendMode = BlendMode.Opaque;
         graphicsContext.SetTexture(sourceFramebuffer.Textures[0]);
         program.Activate();
-        program.SetUniform("ProjectionMatrix", destFramebuffer.CreateOrthographic());
+        program.SetUniform("ProjectionMatrix", destFramebuffer.CreateOrthographicCached());
         program.SetUniform("InputDelta", this.Opacity);
         this._vao.Render<ClassicFadeTransitionRenderer.Vertex>(PrimitiveType.Quads, this._vertices);
       }
