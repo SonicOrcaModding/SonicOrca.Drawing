@@ -32,6 +32,7 @@ namespace SonicOrca.Drawing.LevelRendering
       private readonly IVideoSettings _videoSettings;
       private readonly Level _level;
       private TileSet _tileSet;
+      private ITexture[] _cachedTileTextures;
       private ParticleManager _particleManager;
       private ResourceSession _resourceSession;
       private IFramebuffer _canvasFramebuffer;
@@ -181,7 +182,9 @@ namespace SonicOrca.Drawing.LevelRendering
         ITileRenderer tileRenderer = renderer.GetTileRenderer();
         tileRenderer.ClipRectangle = (SonicOrca.Geometry.Rectangle) viewport.Destination;
         tileRenderer.ModelMatrix = Matrix4.Identity;
-        tileRenderer.Textures = ((IEnumerable<ITexture>) this._tileSet.Textures).ToArray<ITexture>();
+        if (this._cachedTileTextures == null)
+          this._cachedTileTextures = ((IEnumerable<ITexture>) this._tileSet.Textures).ToArray<ITexture>();
+        tileRenderer.Textures = this._cachedTileTextures;
         tileRenderer.Filter = viewOptions.Filter;
         tileRenderer.FilterAmount = viewOptions.FilterAmount;
         Stopwatch.StartNew();

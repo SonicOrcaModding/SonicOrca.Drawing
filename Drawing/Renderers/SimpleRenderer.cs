@@ -42,6 +42,9 @@ namespace SonicOrca.Drawing.Renderers
       private Vector2[] vertexPositions = new Vector2[4];
       private Vector2[] vertexUVs = new Vector2[4];
       private bool _flushProjectionMatrixUploaded;
+      private readonly ITexture[] _singleTextureCache = new ITexture[1];
+      private readonly Colour[] _quadColourCache = new Colour[4];
+      private Colour[] _pushVertColourCache;
 
       public Matrix4 ModelMatrix
       {
@@ -245,7 +248,7 @@ namespace SonicOrca.Drawing.Renderers
           this._batchOperations[this.numBatchOperations]._vertexCount = this._batchedVertexCount - this._batchedVertexIndex;
           this._batchOperations[this.numBatchOperations]._blendMode = this._blendMode;
           this._batchOperations[this.numBatchOperations]._clipRectangle = this._clipRectangle;
-          this._batchOperations[this.numBatchOperations]._textures = (IReadOnlyList<ITexture>) ((IEnumerable<ITexture>) this._textures).ToArray<ITexture>();
+          this._batchOperations[this.numBatchOperations]._textures = (IReadOnlyList<ITexture>) this._textures;
           this._batchOperations[this.numBatchOperations]._modelMatrix = this._modelMatrix;
           this._batchOperations[this.numBatchOperations]._additiveColour = this._additiveColour;
         }
@@ -255,11 +258,13 @@ namespace SonicOrca.Drawing.Renderers
 
       private void PushVertices(IReadOnlyList<Vector2> positions)
       {
-        Colour[] colours = new Colour[((IReadOnlyCollection<Vector2>) positions).Count];
-        Vector2[] textureMappings = new Vector2[((IReadOnlyCollection<Vector2>) positions).Count];
-        for (int index = 0; index < ((IReadOnlyCollection<Vector2>) positions).Count; ++index)
-          colours[index] = this.Colour;
-        this.PushVertices(positions, (IReadOnlyList<Colour>) colours, (IReadOnlyList<Vector2>) textureMappings);
+        int count = ((IReadOnlyCollection<Vector2>) positions).Count;
+        if (this._pushVertColourCache == null || this._pushVertColourCache.Length < count)
+          this._pushVertColourCache = new Colour[count];
+        Vector2[] textureMappings = new Vector2[count];
+        for (int index = 0; index < count; ++index)
+          this._pushVertColourCache[index] = this.Colour;
+        this.PushVertices(positions, (IReadOnlyList<Colour>) this._pushVertColourCache, (IReadOnlyList<Vector2>) textureMappings);
       }
 
       public void PushVertices(
@@ -366,10 +371,8 @@ namespace SonicOrca.Drawing.Renderers
         bool flipX = false,
         bool flipY = false)
       {
-        this.RenderTexture((IEnumerable<ITexture>) new ITexture[1]
-        {
-          texture
-        }, source, destination, flipX, flipY);
+        this._singleTextureCache[0] = texture;
+        this.RenderTexture((IEnumerable<ITexture>) this._singleTextureCache, source, destination, flipX, flipY);
       }
 
       public void RenderTexture(
@@ -388,13 +391,11 @@ namespace SonicOrca.Drawing.Renderers
         else
           Renderer.GetTextureMappings(texture, (Rectanglei) source, this.vertexUVs, flipX, flipY);
         this.Textures = textures;
-        this.PushVertices((IReadOnlyList<Vector2>) this.vertexPositions, (IReadOnlyList<Colour>) new Colour[4]
-        {
-          this.Colour,
-          this.Colour,
-          this.Colour,
-          this.Colour
-        }, (IReadOnlyList<Vector2>) this.vertexUVs);
+        this._quadColourCache[0] = this.Colour;
+        this._quadColourCache[1] = this.Colour;
+        this._quadColourCache[2] = this.Colour;
+        this._quadColourCache[3] = this.Colour;
+        this.PushVertices((IReadOnlyList<Vector2>) this.vertexPositions, (IReadOnlyList<Colour>) this._quadColourCache, (IReadOnlyList<Vector2>) this.vertexUVs);
       }
 
       public void RenderQuad(Colour colour, Rectangle rectangle)
@@ -535,7 +536,7 @@ namespace SonicOrca.Drawing.Renderers
           this._vertexCount = vertexCount;
           this._blendMode = blendMode;
           this._clipRectangle = clipRectangle;
-          this._textures = (IReadOnlyList<ITexture>) textures.ToArray<ITexture>();
+          this._textures = textures is ITexture[] arr ? (IReadOnlyList<ITexture>) arr : (IReadOnlyList<ITexture>) textures.ToArray<ITexture>();
           this._modelMatrix = modelMatrix;
           this._additiveColour = additiveColour;
         }
