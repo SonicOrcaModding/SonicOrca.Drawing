@@ -83,6 +83,7 @@ namespace SonicOrca.Drawing.Renderers
       {
         IFramebuffer currentFramebuffer = this._graphicsContext.CurrentFramebuffer;
         WaterManager.waveTexture.Wrapping = TextureWrapping.Repeat;
+        GL.BindTexture(TextureTarget.Texture2D, WaterManager.waveTexture.Id);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, 33071);
         int y = (int) ((double) WaterManager.viewportWaterLevel - 80.0);
         if (y < 0)
