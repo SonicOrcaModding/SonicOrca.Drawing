@@ -14,8 +14,10 @@ using SonicOrca.Resources;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+#if !MONO_NX
 using System.Drawing;
 using System.Drawing.Imaging;
+#endif
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -307,6 +309,9 @@ namespace SonicOrca.Drawing.LevelRendering
 
       public void RenderToClipboard(Viewport viewport, LayerViewOptions layerViewOptions)
       {
+#if MONO_NX
+        return;
+#else
         Rectanglei destination1 = viewport.Destination;
         int width1 = destination1.Width;
         destination1 = viewport.Destination;
@@ -361,6 +366,7 @@ namespace SonicOrca.Drawing.LevelRendering
           {
           }
         }
+#endif
       }
 
       private void RenderWaterfallEffects(Renderer renderer, Viewport viewport, RenderingLayer rlayer)

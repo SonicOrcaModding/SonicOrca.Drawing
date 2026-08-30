@@ -6,8 +6,10 @@
 
 using OpenTK.Graphics.OpenGL;
 using System;
+#if !MONO_NX
 using System.Drawing;
 using System.Drawing.Imaging;
+#endif
 
 namespace SonicOrca.Drawing.Renderers
 {
@@ -16,6 +18,9 @@ namespace SonicOrca.Drawing.Renderers
     {
       public static void GrabScreenshot()
       {
+#if MONO_NX
+        return;
+#else
         int width = 1920;
         int height = 1080;
         Bitmap bitmap = new Bitmap(width, height);
@@ -26,6 +31,7 @@ namespace SonicOrca.Drawing.Renderers
         string filename = $"Sonic 2 HD {(object) DateTime.Now.Year}-{(object) DateTime.Now.Month}-{(object) DateTime.Now.Day} {(object) DateTime.Now.Hour}-{(object) DateTime.Now.Minute}-{(object) DateTime.Now.Second}-{(object) DateTime.Now.Millisecond}.png";
         bitmap.Save(filename, ImageFormat.Png);
         bitmap.Dispose();
+#endif
       }
     }
 }
